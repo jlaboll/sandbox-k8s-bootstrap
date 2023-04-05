@@ -1,0 +1,33 @@
+---
+- name: "Create Calico template directory"
+  become: yes
+  file:
+    path: "{{ calico.crd_directory }}"
+    state: directory
+    mode: 0755
+
+- name: "Copy CRDs"
+  become: yes
+  template:
+    src: "{{ item }}"
+    dest: "{{ calico.crd_directory }}/{{ item }}"
+  loop: "{{ calico.crds }}"
+
+- name: "Pause until kube-apiserver is ready"
+  become: yes
+  become_user: "{{ ansible_user_id }}"
+  command: "kubectl get nodes"
+  register: kubectl_get
+  until: "kubectl_get is not failed"
+  retries: 10
+  delay: 5
+
+- name: "Install CRDs"
+  become: yes
+  become_user: "{{ ansible_user_id }}"
+  command: "kubectl create -f {{ calico.crd_directory }}/{{ item }}"
+  register: kubectl_create
+  until: "kubectl_create is not failed"
+  retries: 3
+  delay: 1
+  loop: "{{ calico.crds }}"

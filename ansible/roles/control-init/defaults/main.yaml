@@ -1,0 +1,49 @@
+local:
+  artifact_dir: .run
+  certificate_key_file: .run/cert-key
+  token_file: .run/token
+  certificate_hash_file: .run/cert-hash
+  
+cluster:
+  name: "k8scluster"
+  endpoint: "controlplane.cluster.local"
+  certs_dir: "/etc/kubernetes/pki"
+
+k8s:
+  version: 1.25.3
+
+network:
+  domain: "cluster.local"
+  pod_subnet: "192.168.0.0/16"
+  service_subnet: "10.96.0.0/12"
+
+calico:
+  crd_directory: /etc/projectcalico
+  crds:
+    - namespace.tigera.yaml
+    - crd.projectcalico.org_bgpconfigurations.yaml
+    - crd.projectcalico.org_bgppeers.yaml
+    - crd.projectcalico.org_blockaffinities.yaml
+    - crd.projectcalico.org_caliconodestatuses.yaml
+    - crd.projectcalico.org_clusterinformations.yaml
+    - crd.projectcalico.org_felixconfigurations.yaml
+    - crd.projectcalico.org_globalnetworkpolicies.yaml
+    - crd.projectcalico.org_globalnetworksets.yaml
+    - crd.projectcalico.org_hostendpoints.yaml
+    - crd.projectcalico.org_ipamblocks.yaml
+    - crd.projectcalico.org_ipamconfigs.yaml
+    - crd.projectcalico.org_ipamhandles.yaml
+    - crd.projectcalico.org_ippools.yaml
+    - crd.projectcalico.org_ipreservations.yaml
+    - crd.projectcalico.org_kubecontrollersconfigurations.yaml
+    - crd.projectcalico.org_networkpolicies.yaml
+    - crd.projectcalico.org_networksets.yaml
+    - operator.tigera.io_apiservers_crd.yaml
+    - operator.tigera.io_imagesets_crd.yaml
+    - operator.tigera.io_installations_crd.yaml
+    - operator.tigera.io_tigerastatuses_crd.yaml
+    - 02-serviceaccount-tigera-operator.yaml
+    - 02-role-tigera-operator.yaml
+    - 02-rolebinding-tigera-operator.yaml
+    - 02-tigera-operator.yaml
+    - custom-resources.yaml

@@ -1,0 +1,6 @@
+---
+- hosts: all
+  name: "Bootstrapping hosts"
+  roles:
+    - name: "K8's pkg/dep bootstrap"
+      role: k8s

@@ -1,0 +1,51 @@
+- name: "Install k8s keys"
+  become: yes
+  import_tasks: k8s_gpg_key.yaml
+
+- name: "Install k8s repositories"
+  become: yes
+  import_tasks: k8s_repo.yaml
+
+- name: "Install k8s packages"
+  become: yes
+  import_tasks: k8s_install.yaml
+
+- name: "Hold k8s packages"
+  become: yes
+  import_tasks: k8s_hold.yaml
+
+- name: "Install containerd dependencies"
+  become: yes
+  import_tasks: containerd_dep.yaml
+
+- name: "Download containerd"
+  become: yes
+  import_tasks: containerd_download.yaml
+
+- name: "Disable swap"
+  become: yes
+  import_tasks: k8s_swapoff.yaml
+
+- name: "Create containerd directories"
+  become: yes
+  import_tasks: containerd_dir.yaml
+
+- name: "Start containerd"
+  become: yes
+  import_tasks: containerd_start.yaml
+
+- name: "Load kernel modules"
+  become: yes
+  import_tasks: containerd_module.yaml
+
+- name: "Set options for containerd"
+  become: yes
+  import_tasks: containerd_config.yaml
+
+- name: "Check/Set kubelet config"
+  become: yes
+  import_tasks: kubelet_add_args.yaml
+
+- name: "Start kubelet"
+  become: yes
+  import_tasks: kubelet_start.yaml

@@ -1,0 +1,13 @@
+---
+- name: "Check kubelet args in kubelet config"
+  become: yes
+  shell: grep "^Environment=\"KUBELET_EXTRA_ARGS=" /etc/systemd/system/kubelet.service.d/10-kubeadm.conf || true
+  register: check_args
+
+- name: "Add runtime args in kubelet config"
+  become: yes
+  lineinfile:
+    dest: "/etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
+    line: "Environment=\"KUBELET_EXTRA_ARGS= --runtime-cgroups=/system.slice/containerd.service --container-runtime=remote --runtime-request-timeout=15m --container-runtime-endpoint=unix:///run/containerd/containerd.sock\""
+    insertafter: '\[Service\]'
+  when: check_args.stdout == ""

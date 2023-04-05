@@ -1,0 +1,20 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: JoinConfiguration
+nodeRegistration:
+  criSocket: "unix:///run/containerd/containerd.sock"
+  imagePullPolicy: IfNotPresent
+  name: "{{ inventory_hostname }}"
+  taints: 
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/master
+controlPlane:
+  localAPIEndpoint: 
+    advertiseAddress: "{{ ansible_default_ipv4.address }}"
+    bindPort: 6443
+  certificateKey: "{{ cert_key }}"
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: "{{ cluster.endpoint }}:6443"
+    token: "{{ token }}"
+    caCertHashes:
+      - "{{ cert_hash }}"

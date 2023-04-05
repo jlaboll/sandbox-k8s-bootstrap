@@ -1,0 +1,63 @@
+- name: "Create local directory for generated variables"
+  file:
+    path: "{{ local.artifact_dir }}"
+    state: directory
+  delegate_to: localhost
+  run_once: true
+
+- name: "Generate certificate key for control-plane"
+  become: yes
+  command: kubeadm certs certificate-key
+  run_once: true
+  register: cert_key
+
+- name: "Persist certificate key locally"
+  copy:
+    dest: "{{ local.certificate_key_file }}"
+    content: "{{ cert_key.stdout }}"
+  delegate_to: localhost
+  run_once: true
+  
+- name: "Generate bootstrap token"
+  become: yes
+  command: kubeadm token generate
+  run_once: true
+  register: token
+
+- name: "Persist token locally"
+  copy:
+    dest: "{{ local.token_file }}"
+    content: "{{ token.stdout }}"
+  delegate_to: localhost
+  run_once: true
+
+- name: "Copy kubeadm config"
+  become: yes
+  template:
+    src: kubeadm.yaml
+    dest: /etc/kubeadm.yaml
+
+- name: "Kubeadm Init"
+  become: yes
+  command: kubeadm init --upload-certs --config /etc/kubeadm.yaml
+
+- name: "Copy .kube config for SSH user"
+  become: yes
+  import_tasks: admin_config.yaml
+
+- name: "Install Calico"
+  become: yes
+  import_tasks: calico_init.yaml
+
+- name: "Generate certificate hash"
+  become: yes
+  shell: "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* /sha256:/'"
+  run_once: true
+  register: cert_hash
+
+- name: "Persist certificate hash locally"
+  copy:
+    dest: "{{ local.certificate_hash_file }}"
+    content: "{{ cert_hash.stdout }}"
+  delegate_to: localhost
+  run_once: true

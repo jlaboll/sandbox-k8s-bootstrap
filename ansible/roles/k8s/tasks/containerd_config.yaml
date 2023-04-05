@@ -1,0 +1,18 @@
+---
+- name: "Set bridge-nf-call-iptables"
+  become: yes
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+
+- name: "Set bridge-nf-call-ip6tables"
+  become: yes
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+
+- name: "Set ip_forward"
+  become: yes
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1

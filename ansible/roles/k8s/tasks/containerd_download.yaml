@@ -1,0 +1,6 @@
+---
+- name: "Download containerd"
+  unarchive:
+    src: "https://github.com/containerd/containerd/releases/download/v{{ containerd.version }}/cri-containerd-cni-{{ containerd.version }}-linux-amd64.tar.gz"
+    dest: "/"
+    remote_src: yes

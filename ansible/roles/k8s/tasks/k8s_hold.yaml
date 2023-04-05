@@ -1,0 +1,10 @@
+---
+- name: "Hold packages"
+  become: yes
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - kubeadm
+    - kubectl
+    - kubelet

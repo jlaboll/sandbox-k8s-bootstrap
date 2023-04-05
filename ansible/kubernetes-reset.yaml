@@ -1,0 +1,21 @@
+---
+  - hosts: worker-nodes
+    name: "Resetting worker nodes"
+    tasks:
+      - name: "Run kubeadm reset"
+        become: yes
+        command: kubeadm reset -f
+
+  - hosts: control-plane
+    name: "Resetting control plane nodes"
+    tasks:
+      - name: "Run kubeadm reset"
+        become: yes
+        command: kubeadm reset -f
+
+  - hosts: root-node
+    name: "Resetting control plane nodes"
+    tasks:
+      - name: "Run kubeadm reset"
+        become: yes
+        command: kubeadm reset -f

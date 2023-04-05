@@ -1,0 +1,10 @@
+---
+- name: "Create containerd config directory"
+  become: yes
+  file: path={{ containerd.config_dir }} state=directory
+
+- name: "Create CNI binary directory"
+  file: path={{ cni.binary_dir }} state=directory
+
+- name: "Create CNI config directory"
+  file: path={{ cni.config_dir }} state=directory

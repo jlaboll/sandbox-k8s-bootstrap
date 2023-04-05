@@ -1,0 +1,12 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: JoinConfiguration
+nodeRegistration:
+  criSocket: "unix:///run/containerd/containerd.sock"
+  imagePullPolicy: IfNotPresent
+  name: "{{ inventory_hostname }}"
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: "{{ cluster.endpoint }}:6443"
+    token: "{{ token }}"
+    caCertHashes:
+      - "{{ cert_hash }}"

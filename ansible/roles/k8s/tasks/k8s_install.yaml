@@ -1,0 +1,9 @@
+---
+- name: "Install k8's"
+  become: yes
+  apt:
+    pkg:
+      - "kubeadm={{ k8s.version }}"
+      - "kubectl={{ k8s.version }}"
+      - "kubelet={{ k8s.version }}"
+    update_cache: yes

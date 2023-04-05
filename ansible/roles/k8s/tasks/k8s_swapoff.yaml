@@ -1,0 +1,11 @@
+---
+- name: "Disable swap"
+  become: yes
+  command: swapoff -a
+
+- name: "Edit fstab"
+  become: yes
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'

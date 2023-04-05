@@ -1,0 +1,36 @@
+---
+  - hosts: root-node
+    name: "Initialize Kubernetes Control Plane"
+    roles:
+      - name: "Initialize control-plane"
+        role: control-init
+
+  - hosts: control-plane
+    vars:
+      token: "{{ lookup('file', local.token_file) }}"
+      cert_hash: "{{ lookup('file', local.certificate_hash_file) }}"
+      cert_key: "{{ lookup('file', local.certificate_key_file) }}"
+    name: "Join Kubernetes control plane nodes"
+    roles:
+      - name: "Join control-plane nodes"
+        role: control-join
+
+  - hosts: worker-nodes
+    vars:
+      token: "{{ lookup('file', local.token_file) }}"
+      cert_hash: "{{ lookup('file', local.certificate_hash_file) }}"
+    name: "Join Kubernetes worker nodes"
+    roles:
+      - name: "Join worker nodes"
+        role: worker-join
+
+  - hosts: root-node
+    name: "Copy kubeconfig from remote"
+    tasks:
+      - name: fetching
+        become: yes
+        fetch:
+          src: /etc/kubernetes/admin.conf
+          dest: ../admin.conf
+          flat: yes
+        run_once: True

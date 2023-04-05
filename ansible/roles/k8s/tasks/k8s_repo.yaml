@@ -1,0 +1,7 @@
+---
+- name: "Add k8's deb repository"
+  become: yes
+  apt_repository:
+    repo: deb {{ k8s.deb_repo_url }} {{ k8s.deb_dist }} {{ k8s.deb_branch }}
+    state: present
+    filename: kubernetes

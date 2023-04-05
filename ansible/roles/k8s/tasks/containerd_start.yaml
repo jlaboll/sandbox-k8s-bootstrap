@@ -1,0 +1,4 @@
+---
+- name: "Start containerd"
+  become: yes
+  systemd: name=containerd daemon_reload=yes state=started enabled=yes

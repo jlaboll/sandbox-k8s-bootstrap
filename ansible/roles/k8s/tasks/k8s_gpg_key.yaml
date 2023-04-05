@@ -1,0 +1,6 @@
+---
+- name: "Add k8's apt key"
+  become: yes
+  apt_key:
+    url: "{{ k8s.gpg_key_url }}"
+    state: present

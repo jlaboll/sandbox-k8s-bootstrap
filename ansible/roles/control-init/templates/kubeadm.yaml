@@ -1,0 +1,53 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+nodeRegistration:
+  criSocket: unix:///run/containerd/containerd.sock
+  imagePullPolicy: IfNotPresent
+  name: "{{ inventory_hostname }}"
+  taints: 
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/master
+certificateKey: "{{ cert_key.stdout }}"
+bootstrapTokens:
+  - token: "{{ token.stdout }}"
+    usages:
+      - authentication
+      - signing
+    groups:
+      - system:bootstrappers:kubeadm:default-node-token
+localAPIEndpoint:
+  advertiseAddress: "{{ ansible_default_ipv4.address }}"
+  bindPort: 6443
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+imageRepository: registry.k8s.io
+clusterName: "{{ cluster.name }}"
+kubernetesVersion: "{{ k8s.version }}"
+certificatesDir: /etc/kubernetes/pki
+controlPlaneEndpoint: "{{ cluster.endpoint }}:6443"
+apiServer:
+  timeoutForControlPlane: 4m0s
+  certSANs: 
+    - "{{ cluster.endpoint }}"
+    - "{{ inventory_hostname }}"
+    - "{{ ansible_default_ipv4.address }}"
+    - "{{ ansible_default_ipv6.address }}"
+  extraArgs:
+    authorization-mode: Node,RBAC
+    enable-admission-plugins: NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota
+controllerManager: {}
+scheduler: {}
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+dns: {}
+networking:
+  dnsDomain: "{{ network.domain }}"
+  podSubnet: "{{ network.pod_subnet }}"
+  serviceSubnet: "{{ network.service_subnet }}"
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
+streamingConnectionIdleTimeout: 15m0s
